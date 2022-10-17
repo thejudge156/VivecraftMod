@@ -21,6 +21,7 @@ import net.minecraft.world.level.dimension.DimensionType;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL30;
 import org.lwjgl.opengl.GL43;
+import org.lwjgl.system.MemoryStack;
 import org.lwjgl.system.MemoryUtil;
 import org.vivecraft.ClientDataHolder;
 import org.vivecraft.GlStateHelper;
@@ -42,6 +43,7 @@ import org.vivecraft.utils.LangHelper;
 import org.vivecraft.Xplat;
 
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -830,6 +832,14 @@ public abstract class VRRenderer
                 IrisHelper.reload();
             }
 
+            Class<?> clazz = Class.forName("org.lwjgl.glfw.CallbackBridge");
+            Method eglDisplayM = clazz.getDeclaredMethod("getEGLDisplayPtr");
+            Method eglConfigM = clazz.getDeclaredMethod("getEGLConfigPtr");
+            Method eglContextM = clazz.getDeclaredMethod("getEGLContextPtr");
+            long eglDisplayPtr = (long) eglDisplayM.invoke(null);
+            long eglConfigPtr = (long) eglConfigM.invoke(null);
+            long eglContextPtr = (long) eglContextM.invoke(null);
+            VLoader.setEGLGlobal(MemoryUtil.memGetAddress(eglContextPtr), MemoryUtil.memGetAddress(eglDisplayPtr), MemoryUtil.memGetAddress(eglConfigPtr));
         }
     }
 
