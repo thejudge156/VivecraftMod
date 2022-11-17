@@ -209,12 +209,6 @@ public abstract class RenderTargetMixin implements RenderTargetExtension {
 		return linearFilter ? GL11.GL_LINEAR : i;
 	}
 
-	@Inject(at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/platform/GlStateManager;_glFramebufferTexture2D(IIIII)V", shift = At.Shift.AFTER, ordinal = 1), method = "createBuffers")
-	public void addBufferTexture(int i, int j, boolean bl, CallbackInfo ci) {
-		GlStateManager._glFramebufferTexture2D(36160, 36128, 3553, this.depthBufferId, 0);
-	}
-
-
 	/**
 	 * @author
 	 * @reason
