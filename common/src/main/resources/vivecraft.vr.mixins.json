@@ -22,6 +22,7 @@
     "client.OptionsVRMixin",
     "client.OptionVRMixin",
     "client.gui.GuiVRMixin",
+    "client.gui.GuiComponentVRMixin",
     "client.gui.NoSodiumGuiVRMixin",
     "client.gui.components.EditBoxVRMixin",
     "client.gui.screens.ScreenVRMixin",
@@ -34,6 +35,7 @@
     "client.gui.screens.SoundOptionsScreenVRMixin",
     "client.multiplayer.ClientPacketListenerVRMixin",
     "client.multiplayer.MultiPlayerGameModeVRMixin",
+    "client.particle.ItemPickupParticleVRMixin",
     "client.player.LocalPlayerVRMixin",
     "client.renderer.GameRendererVRMixin",
     "client.renderer.LevelRendererVRMixin",
@@ -45,7 +47,9 @@
     "client.renderer.entity.MobRendererVRMixin",
     "client.renderer.NoSodiumLevelRendererVRMixin",
 
-    "world.entity.vehicle.BoatMixin"
+    "world.entity.vehicle.BoatMixin",
+    "world.item.ItemVRMixin",
+    "world.item.PotionItemVRMixin"
   ],
   "server": [
   ],
