@@ -21,7 +21,7 @@ void main(void) {
 	vec2 pos = (gl_FragCoord.xy - position) / resolution;
 	vec3 fragPos = getFragmentPosition(pos);
 	float fragHmdDot = dot(fragPos - hmdViewPosition, hmdPlaneNormal);
-	if (((pass == 0 || pass == 2) && fragHmdDot >= 0) || pass == 1) {
+	if (((pass == 0 || pass == 2) && fragHmdDot >= 0.0f) || pass == 1) {
 		vec4 color = texture(Sampler0, pos);
 		if (pass == 2) {
 			color = vec4(1, 1, 1, 1);

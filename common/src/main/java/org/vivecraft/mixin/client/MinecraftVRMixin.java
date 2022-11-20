@@ -1220,7 +1220,7 @@ public abstract class MinecraftVRMixin extends ReentrantBlockableEventLoop<Runna
 			RenderPass renderpass = ClientDataHolder.getInstance().currentPass;
 
 			VRShaders._Overlay_eye.set(
-					ClientDataHolder.getInstance().currentPass == RenderPass.LEFT ? 1 : -1);
+					ClientDataHolder.getInstance().currentPass == RenderPass.LEFT ? 1f : -1f);
 			((RenderTargetExtension) rendertarget).blitFovReduction(VRShaders.fovReductionShader, ClientDataHolder.getInstance().vrRenderer.framebufferEye0.viewWidth,
 					ClientDataHolder.getInstance().vrRenderer.framebufferEye0.viewHeight);
 			GlStateManager._glUseProgram(0);
@@ -1330,7 +1330,7 @@ public abstract class MinecraftVRMixin extends ReentrantBlockableEventLoop<Runna
 				(float) ClientDataHolder.getInstance().vrSettings.mixedRealityKeyColor.getRed() / 255.0F,
 				(float) ClientDataHolder.getInstance().vrSettings.mixedRealityKeyColor.getGreen() / 255.0F,
 				(float) ClientDataHolder.getInstance().vrSettings.mixedRealityKeyColor.getBlue() / 255.0F);
-		VRShaders._DepthMask_alphaModeUniform.set(flag1 ? 1 : 0);
+		VRShaders._DepthMask_alphaModeUniform.set(flag1 ? 1f : 0f);
 		GlStateManager._activeTexture(33985);
 		RenderSystem.setShaderTexture(0, ClientDataHolder.getInstance().vrRenderer.framebufferMR.getColorTextureId());
 		GlStateManager._activeTexture(33986);
