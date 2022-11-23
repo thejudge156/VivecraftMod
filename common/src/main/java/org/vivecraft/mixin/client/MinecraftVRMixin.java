@@ -71,6 +71,7 @@ import org.vivecraft.gameplay.screenhandlers.GuiHandler;
 import org.vivecraft.gameplay.screenhandlers.KeyboardHandler;
 import org.vivecraft.gameplay.screenhandlers.RadialHandler;
 import org.vivecraft.gameplay.trackers.TelescopeTracker;
+import org.vivecraft.provider.VLoader;
 import org.vivecraft.provider.openvr_jna.MCOpenVR;
 import org.vivecraft.provider.openvr_jna.OpenVRStereoRenderer;
 import org.vivecraft.provider.openvr_jna.VRInputAction;
@@ -406,6 +407,8 @@ public abstract class MinecraftVRMixin extends ReentrantBlockableEventLoop<Runna
 
 	//Replaces normal runTick
 	public void newRunTick(boolean bl) {
+		VLoader.setEGL();
+
 		this.window.setErrorSection("Pre render");
 		// long l = Util.getNanos();
 		if (this.window.shouldClose()) {
