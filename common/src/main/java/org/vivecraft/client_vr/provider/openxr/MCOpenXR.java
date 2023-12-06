@@ -1172,41 +1172,13 @@ public class MCOpenXR extends MCVR {
 
     }
 
+    XrActionSet actionSet;
     private void setupControllers() {
-        XrActionSet actionSet = new XrActionSet(this.actionSetHandles.get(VRInputActionSet.GLOBAL), instance);
+        actionSet = new XrActionSet(this.actionSetHandles.get(VRInputActionSet.GLOBAL), instance);
         this.grip[0] = createAction("/actions/global/in/righthand", "/actions/global/in/righthand", "pose", actionSet);
         this.grip[1] = createAction("/actions/global/in/lefthand", "/actions/global/in/lefthand", "pose", actionSet);
         this.aim[0] = createAction("/actions/global/in/righthandaim", "/actions/global/in/righthandaim", "pose", actionSet);
         this.aim[1] = createAction("/actions/global/in/lefthandaim", "/actions/global/in/lefthandaim", "pose", actionSet);
-
-        try (MemoryStack stack = MemoryStack.stackPush()){
-            XrActionSpaceCreateInfo grip_left = XrActionSpaceCreateInfo.calloc(stack);
-            grip_left.type(XR10.XR_TYPE_ACTION_SPACE_CREATE_INFO);
-            grip_left.next(NULL);
-            grip_left.action(new XrAction(grip[0], actionSet));
-            grip_left.subactionPath(getPath("/user/hand/right"));
-            PointerBuffer pp = stackCallocPointer(1);
-            XR10.xrCreateActionSpace(session, grip_left, pp);
-            this.gripSpace[0] = new XrSpace(pp.get(0), session);
-
-            grip_left.action(new XrAction(grip[1], actionSet));
-            grip_left.subactionPath(getPath("/user/hand/left"));
-            grip_left.poseInActionSpace(POSE_IDENTITY);
-            XR10.xrCreateActionSpace(session, grip_left, pp);
-            this.gripSpace[1] = new XrSpace(pp.get(0), session);
-
-            grip_left.action(new XrAction(aim[0], actionSet));
-            grip_left.subactionPath(getPath("/user/hand/right"));
-            XR10.xrCreateActionSpace(session, grip_left, pp);
-            this.aimSpace[0] = new XrSpace(pp.get(0), session);
-
-            grip_left.action(new XrAction(aim[1], actionSet));
-            grip_left.subactionPath(getPath("/user/hand/left"));
-            XR10.xrCreateActionSpace(session, grip_left, pp);
-            this.aimSpace[1] = new XrSpace(pp.get(0), session);
-
-        }
-
     }
 
     private void loadDefaultBindings() {
@@ -1271,11 +1243,31 @@ public class MCOpenXR extends MCVR {
 
             XR10.xrAttachSessionActionSets(session, attach_info);
 
-            //Controller tracking?
-            //XrActionSpaceCreateInfo
-            //XR10.xrCreateActionSpace()
+            // Oculus stop being out of spec PLEASE
+            XrActionSpaceCreateInfo grip_left = XrActionSpaceCreateInfo.calloc(stack);
+            grip_left.type(XR10.XR_TYPE_ACTION_SPACE_CREATE_INFO);
+            grip_left.next(NULL);
+            grip_left.action(new XrAction(grip[0], actionSet));
+            grip_left.subactionPath(getPath("/user/hand/right"));
+            PointerBuffer pp = stackCallocPointer(1);
+            XR10.xrCreateActionSpace(session, grip_left, pp);
+            this.gripSpace[0] = new XrSpace(pp.get(0), session);
 
+            grip_left.action(new XrAction(grip[1], actionSet));
+            grip_left.subactionPath(getPath("/user/hand/left"));
+            grip_left.poseInActionSpace(POSE_IDENTITY);
+            XR10.xrCreateActionSpace(session, grip_left, pp);
+            this.gripSpace[1] = new XrSpace(pp.get(0), session);
 
+            grip_left.action(new XrAction(aim[0], actionSet));
+            grip_left.subactionPath(getPath("/user/hand/right"));
+            XR10.xrCreateActionSpace(session, grip_left, pp);
+            this.aimSpace[0] = new XrSpace(pp.get(0), session);
+
+            grip_left.action(new XrAction(aim[1], actionSet));
+            grip_left.subactionPath(getPath("/user/hand/left"));
+            XR10.xrCreateActionSpace(session, grip_left, pp);
+            this.aimSpace[1] = new XrSpace(pp.get(0), session);
         }
     }
 
