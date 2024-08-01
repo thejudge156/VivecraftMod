@@ -25,8 +25,18 @@ public class GuiRenderOpticsSettings extends GuiVROptionsBase {
         VRSettings.VrOptions.STENCIL_ON,
         VRSettings.VrOptions.HANDHELD_CAMERA_RENDER_SCALE,
         VRSettings.VrOptions.HANDHELD_CAMERA_FOV,
-        VRSettings.VrOptions.MIRROR_SCREENSHOT_CAMERA,
-        VRSettings.VrOptions.RELOAD_EXTERNAL_CAMERA
+        VRSettings.VrOptions.RELOAD_EXTERNAL_CAMERA,
+        VRSettings.VrOptions.MIRROR_EYE,
+    };
+    static VRSettings.VrOptions[] MROptions = new VRSettings.VrOptions[]{
+        VRSettings.VrOptions.MIXED_REALITY_UNITY_LIKE,
+        VRSettings.VrOptions.MIXED_REALITY_RENDER_HANDS,
+        VRSettings.VrOptions.MIXED_REALITY_KEY_COLOR,
+        VRSettings.VrOptions.MIXED_REALITY_FOV,
+        VRSettings.VrOptions.MIXED_REALITY_UNDISTORTED,
+        VRSettings.VrOptions.MONO_FOV,
+        VRSettings.VrOptions.MIXED_REALITY_ALPHA_MASK,
+        VRSettings.VrOptions.MIXED_REALITY_RENDER_CAMERA_MODEL
     };
     static VRSettings.VrOptions[] UDOptions = new VRSettings.VrOptions[]{
         VRSettings.VrOptions.MONO_FOV,
@@ -42,12 +52,6 @@ public class GuiRenderOpticsSettings extends GuiVROptionsBase {
     };
     static VRSettings.VrOptions[] SOptions = new VRSettings.VrOptions[]{
         VRSettings.VrOptions.MIRROR_EYE
-    };
-    final VROptionEntry[] MROptions = new VROptionEntry[]{
-        new VROptionEntry("vivecraft.options.screen.mixedreality.button", (button, mousePos) -> {
-            Minecraft.getInstance().setScreen(new GuiMixedRealitySettings(this));
-            return true;
-        })
     };
 
     private float prevRenderScaleFactor = this.settings.renderScaleFactor;

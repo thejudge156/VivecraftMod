@@ -54,8 +54,6 @@ public abstract class VRRenderer {
     protected int dispLastWidth;
     protected int dispLastHeight;
     public Matrix4f[] eyeproj = new Matrix4f[2];
-    public RenderTarget framebufferEye0;
-    public RenderTarget framebufferEye1;
     public RenderTarget framebufferMR;
     public RenderTarget framebufferUndistorted;
     public RenderTarget framebufferVrRender;
@@ -74,8 +72,6 @@ public abstract class VRRenderer {
     public int lastRenderDistanceChunks = -1;
     public long lastWindow = 0L;
     public float lastWorldScale = 0.0F;
-    protected int LeftEyeTextureId = -1;
-    protected int RightEyeTextureId = -1;
     public int mirrorFBHeight;
     public int mirrorFBWidth;
     protected boolean reinitFramebuffers = true;
@@ -100,7 +96,7 @@ public abstract class VRRenderer {
         }
     }
 
-    public abstract void createRenderTexture(int var1, int var2);
+    public abstract void createRenderTexture(int var1, int var2) throws RenderConfigException;
 
     public abstract Matrix4f getProjectionMatrix(int var1, float var2, float var3);
 
@@ -108,17 +104,8 @@ public abstract class VRRenderer {
 
     public abstract boolean providesStencilMask();
 
-    public void deleteRenderTextures() {
-        if (this.LeftEyeTextureId > 0) {
-            RenderSystem.deleteTexture(this.LeftEyeTextureId);
-        }
-
-        if (this.RightEyeTextureId > 0) {
-            RenderSystem.deleteTexture(this.RightEyeTextureId);
-        }
-
-        this.LeftEyeTextureId = this.RightEyeTextureId = -1;
-    }
+    public abstract RenderTarget getLeftEyeTarget();
+    public abstract RenderTarget getRightEyeTarget();
 
     public void doStencil(boolean inverse) {
         Minecraft minecraft = Minecraft.getInstance();
@@ -450,7 +437,7 @@ public abstract class VRRenderer {
         this.resizeFrameBuffers = true;
     }
 
-    public void setupRenderConfiguration() throws Exception {
+    public void setupRenderConfiguration(boolean render) throws Exception {
         Minecraft minecraft = Minecraft.getInstance();
         ClientDataHolderVR dataholder = ClientDataHolderVR.getInstance();
 
@@ -533,6 +520,10 @@ public abstract class VRRenderer {
             }
         }
 
+        //for OPENXR, it needs to reinit
+        this.eyeproj[0] = this.getProjectionMatrix(0, ((GameRendererExtension) minecraft.gameRenderer).vivecraft$getMinClipDistance(), ((GameRendererExtension) minecraft.gameRenderer).vivecraft$getClipDistance());
+        this.eyeproj[1] = this.getProjectionMatrix(1, ((GameRendererExtension) minecraft.gameRenderer).vivecraft$getMinClipDistance(), ((GameRendererExtension) minecraft.gameRenderer).vivecraft$getClipDistance());
+
         if (this.reinitFramebuffers) {
             this.reinitShadersFlag = true;
             this.checkGLError("Start Init");
@@ -572,30 +563,7 @@ public abstract class VRRenderer {
 
             destroy();
 
-            if (this.LeftEyeTextureId == -1) {
-                this.createRenderTexture(eyew, eyeh);
-
-                if (this.LeftEyeTextureId == -1) {
-                    throw new RenderConfigException("Failed to initialise stereo rendering plugin: " + this.getName(), new TextComponent(this.getLastError()));
-                }
-
-                dataholder.print("Provider supplied render texture IDs: " + this.LeftEyeTextureId + " " + this.RightEyeTextureId);
-                dataholder.print("Provider supplied texture resolution: " + eyew + " x " + eyeh);
-            }
-
-            this.checkGLError("Render Texture setup");
-
-            if (this.framebufferEye0 == null) {
-                this.framebufferEye0 = new VRTextureTarget("L Eye", eyew, eyeh, false, false, this.LeftEyeTextureId, false, true, false);
-                dataholder.print(this.framebufferEye0.toString());
-                this.checkGLError("Left Eye framebuffer setup");
-            }
-
-            if (this.framebufferEye1 == null) {
-                this.framebufferEye1 = new VRTextureTarget("R Eye", eyew, eyeh, false, false, this.RightEyeTextureId, false, true, false);
-                dataholder.print(this.framebufferEye1.toString());
-                this.checkGLError("Right Eye framebuffer setup");
-            }
+            this.createRenderTexture(eyew, eyeh);
 
             float resolutionScale = ResolutionControlHelper.isLoaded() ? ResolutionControlHelper.getCurrentScaleFactor() : 1.0F;
 
@@ -829,16 +797,6 @@ public abstract class VRRenderer {
         if (this.fsaaLastPassResultFBO != null) {
             this.fsaaLastPassResultFBO.destroyBuffers();
             this.fsaaLastPassResultFBO = null;
-        }
-
-        if (this.framebufferEye0 != null) {
-            this.framebufferEye0.destroyBuffers();
-            this.framebufferEye0 = null;
-        }
-
-        if (this.framebufferEye1 != null) {
-            this.framebufferEye1.destroyBuffers();
-            this.framebufferEye1 = null;
         }
     }
 }
