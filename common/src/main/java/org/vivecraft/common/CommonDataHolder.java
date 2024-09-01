@@ -16,7 +16,7 @@ public class CommonDataHolder {
             modVersion = version[1];
         }
 
-        versionIdentifier = "Vivecraft-" + mcVersion + "-" + Xplat.getModloader().name + "-" + modVersion;
+        versionIdentifier = "Vivecraft-" + mcVersion + "-" + Xplat.getModloader() + "-" + modVersion;
     }
 
     public static CommonDataHolder getInstance() {

@@ -65,9 +65,6 @@ dependencies {
     bundle("org.lwjgl:lwjgl-openvr:3.3.3:natives-linux") { transitive = false }
     bundle("org.lwjgl:lwjgl-openvr:3.3.3:natives-macos") { transitive = false }
     bundle("org.lwjgl:lwjgl-openvr:3.3.3:natives-windows") { transitive = false }
-
-    compileOnly(annotationProcessor("io.github.llamalad7:mixinextras-common:0.3.5"))
-    implementation(include("io.github.llamalad7:mixinextras-forge:0.3.5"))
 }
 
 processResources {
@@ -92,7 +89,7 @@ shadowJar {
 remapJar {
     input.set shadowJar.archiveFile
     dependsOn shadowJar
-    archiveClassifier.set('forge_nonfunctional_without_changes')
+    archiveClassifier.set('forge')
 }
 
 jar {

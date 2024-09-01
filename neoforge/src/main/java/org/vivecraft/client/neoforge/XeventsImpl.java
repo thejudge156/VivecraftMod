@@ -23,10 +23,10 @@ public class XeventsImpl {
     }
 
     public static void onRenderTickStart(float f) {
-        ClientHooks.fireClientTickPre();
+        EventHooks.onRenderTickStart(f);
     }
 
     public static void onRenderTickEnd(float f) {
-        ClientHooks.fireRenderFramePost(f);
+        EventHooks.onRenderTickEnd(f);
     }
 }

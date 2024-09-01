@@ -27,18 +27,6 @@ public interface Xplat {
      * <a href="https://plugins.jetbrains.com/plugin/16210-architectury">You should also get the IntelliJ plugin to help with @ExpectPlatform.</a>
      */
 
-    enum ModLoader{
-        FABRIC("fabric"),
-        FORGE("forge"),
-        NEOFORGE("neoforge");
-
-        public final String name;
-
-        ModLoader(String name) {
-            this.name = name;
-        }
-    }
-
     @ExpectPlatform
     static boolean isModLoaded(String name) {
         return false;
@@ -55,8 +43,8 @@ public interface Xplat {
     }
 
     @ExpectPlatform
-    static ModLoader getModloader() {
-        throw new AssertionError();
+    static String getModloader() {
+        return "";
     }
 
     @ExpectPlatform
@@ -100,7 +88,6 @@ public interface Xplat {
     }
 
     @ExpectPlatform
-    static boolean serverAcceptsPacket(ClientPacketListener connection, ResourceLocation id) {
-        return true;
+    static void addNetworkChannel(ClientPacketListener listener, ResourceLocation resourceLocation) {
     }
 }

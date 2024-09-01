@@ -108,26 +108,30 @@ public class InteractTracker extends Tracker {
                 Class<?> oclass = object.getClass();
 
                 try {
-                    oclass.getDeclaredMethod(name,
+                    if (oclass.getMethod(name,
                         BlockState.class,
                         net.minecraft.world.level.Level.class,
                         BlockPos.class,
                         net.minecraft.world.entity.player.Player.class,
-                        BlockHitResult.class);
-                    this.rightClickable.add(oclass);
+                        InteractionHand.class,
+                        BlockHitResult.class).getDeclaringClass() == oclass) {
+                        this.rightClickable.add(oclass);
+                    }
                 } catch (Throwable throwable1) {
                 }
 
                 oclass = oclass.getSuperclass();
 
                 try {
-                    oclass.getDeclaredMethod(name,
+                    if (oclass.getMethod(name,
                         BlockState.class,
                         net.minecraft.world.level.Level.class,
                         BlockPos.class,
                         net.minecraft.world.entity.player.Player.class,
-                        BlockHitResult.class);
-                    this.rightClickable.add(oclass);
+                        InteractionHand.class,
+                        BlockHitResult.class).getDeclaringClass() == oclass) {
+                        this.rightClickable.add(oclass);
+                    }
                 } catch (Throwable throwable) {
                 }
             }
@@ -182,7 +186,7 @@ public class InteractTracker extends Tracker {
                     }
                 }
 
-                if (this.dh.vrSettings.realisticEntityInteractEnabled && !this.active[j]) {
+                if (!this.active[j]) {
                     int k = Mth.floor(vec3.x);
                     int l = Mth.floor(vec3.y);
                     int i = Mth.floor(vec3.z);
@@ -200,7 +204,7 @@ public class InteractTracker extends Tracker {
                     }
                 }
 
-                if (this.dh.vrSettings.realisticBlockInteractEnabled && !this.active[j]) {
+                if (!this.active[j]) {
                     BlockPos blockpos = null;
                     blockpos = BlockPos.containing(vec3);
                     BlockState blockstate = this.mc.level.getBlockState(blockpos);
@@ -261,8 +265,7 @@ public class InteractTracker extends Tracker {
 
                     flag = this.mc.gameMode.interactAt(this.mc.player, this.inEntity[i], this.inEntityHit[i], interactionhand).consumesAction() || this.mc.gameMode.interact(this.mc.player, this.inEntity[i], interactionhand).consumesAction();
                 } else if (this.inBlockHit[i] != null) {
-                    // force main hand, since 1.20.5 only checks no item interactions for the main hand
-                    flag = this.mc.gameMode.useItemOn(this.mc.player, InteractionHand.MAIN_HAND, this.inBlockHit[i]).consumesAction();
+                    flag = this.mc.gameMode.useItemOn(this.mc.player, interactionhand, this.inBlockHit[i]).consumesAction();
                 } else if (this.bukkit[i]) {
                     flag = this.mc.gameMode.useItem(this.mc.player, interactionhand).consumesAction();
                 }

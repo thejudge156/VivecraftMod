@@ -37,7 +37,9 @@ public class ErrorScreen extends Screen {
 
     @Override
     public void render(@NotNull GuiGraphics guiGraphics, int i, int j, float f) {
-        super.render(guiGraphics, i, j, f);
+        this.renderBackground(guiGraphics, i, j, f);
         guiGraphics.drawCenteredString(this.font, this.title, this.width / 2, 15, 16777215);
+
+        super.render(guiGraphics, i, j, f);
     }
 }

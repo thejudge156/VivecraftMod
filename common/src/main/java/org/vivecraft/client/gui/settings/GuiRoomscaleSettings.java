@@ -15,9 +15,7 @@ public class GuiRoomscaleSettings extends GuiVROptionsBase {
         VRSettings.VrOptions.BOW_MODE,
         VRSettings.VrOptions.BACKPACK_SWITCH,
         VRSettings.VrOptions.ALLOW_CRAWLING,
-        VRSettings.VrOptions.REALISTIC_DISMOUNT,
-        VRSettings.VrOptions.REALISTIC_BLOCK_INTERACT,
-        VRSettings.VrOptions.REALISTIC_ENTITY_INTERACT
+        VRSettings.VrOptions.REALISTIC_DISMOUNT
     };
 
     public GuiRoomscaleSettings(Screen guiScreen) {

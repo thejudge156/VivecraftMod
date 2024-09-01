@@ -46,14 +46,12 @@ public abstract class LivingEntityRendererMixin<T extends LivingEntity, M extend
         super(context);
     }
 
-    @SuppressWarnings("unchecked")
     @Inject(at = @At("HEAD"), method = "addLayer")
     public void vivecraft$copyLayer(RenderLayer<T, M> renderLayer, CallbackInfoReturnable<Boolean> cir) {
         // check if the layer gets added from the PlayerRenderer, we don't want to copy, if we add it to the VRPlayerRenderer
         // also check that the VRPlayerRenderers were created, this method also gets called in the constructor,
         // those default Layers already are added to the VRPlayerRenderer there
-        EntityRenderDispatcherExtension renderExtension = (EntityRenderDispatcherExtension) entityRenderDispatcher;
-        if ((Object) this.getClass() == PlayerRenderer.class && !renderExtension.vivecraft$getSkinMapVRSeated().isEmpty()) {
+        if ((Object) this.getClass() == PlayerRenderer.class && !((EntityRenderDispatcherExtension) Minecraft.getInstance().getEntityRenderDispatcher()).vivecraft$getSkinMapVRSeated().isEmpty()) {
 
             // try to find a suitable constructor, so we can create a new Object without issues
             Constructor<?> constructor = null;
@@ -82,23 +80,21 @@ public abstract class LivingEntityRendererMixin<T extends LivingEntity, M extend
             // if no suitable constructor was found, use do a basic Object.clone call, and replace the parent of the copy
             if (constructor == null) {
                 // do a hacky clone, and replace parent
-                if (((PlayerModel<?>) model).slim &&
-                    !renderExtension.vivecraft$getSkinMapVRSeated().get("slim").hasLayerType(renderLayer)) {
-                    vivecraft$addLayerClone(renderLayer, (LivingEntityRenderer<T, M>) renderExtension.vivecraft$getSkinMapVRSeated().get("slim"));
-                    vivecraft$addLayerClone(renderLayer, (LivingEntityRenderer<T, M>) renderExtension.vivecraft$getSkinMapVR().get("slim"));
-                } else if (!renderExtension.vivecraft$getSkinMapVRSeated().get("default").hasLayerType(renderLayer)) {
-                    vivecraft$addLayerClone(renderLayer, (LivingEntityRenderer<T, M>) renderExtension.vivecraft$getSkinMapVRSeated().get("default"));
-                    vivecraft$addLayerClone(renderLayer, (LivingEntityRenderer<T, M>) renderExtension.vivecraft$getSkinMapVR().get("default"));
+                if (((PlayerModel<?>) model).slim) {
+                    vivecraft$addLayerClone(renderLayer, (LivingEntityRenderer<T, M>) ((EntityRenderDispatcherExtension) entityRenderDispatcher).vivecraft$getSkinMapVRSeated().get("slim"));
+                    vivecraft$addLayerClone(renderLayer, (LivingEntityRenderer<T, M>) ((EntityRenderDispatcherExtension) entityRenderDispatcher).vivecraft$getSkinMapVR().get("slim"));
+                } else {
+                    vivecraft$addLayerClone(renderLayer, (LivingEntityRenderer<T, M>) ((EntityRenderDispatcherExtension) entityRenderDispatcher).vivecraft$getSkinMapVRSeated().get("default"));
+                    vivecraft$addLayerClone(renderLayer, (LivingEntityRenderer<T, M>) ((EntityRenderDispatcherExtension) entityRenderDispatcher).vivecraft$getSkinMapVR().get("default"));
                 }
             } else {
                 // make a new instance with the vr model as parent
-                if (((PlayerModel<?>) model).slim &&
-                    !renderExtension.vivecraft$getSkinMapVRSeated().get("slim").hasLayerType(renderLayer)) {
-                    vivecraft$addLayerConstructor(constructor, type, (LivingEntityRenderer<T, M>) renderExtension.vivecraft$getSkinMapVRSeated().get("slim"));
-                    vivecraft$addLayerConstructor(constructor, type, (LivingEntityRenderer<T, M>) renderExtension.vivecraft$getSkinMapVR().get("slim"));
-                } else if (!renderExtension.vivecraft$getSkinMapVRSeated().get("default").hasLayerType(renderLayer)) {
-                    vivecraft$addLayerConstructor(constructor, type, (LivingEntityRenderer<T, M>) renderExtension.vivecraft$getSkinMapVRSeated().get("default"));
-                    vivecraft$addLayerConstructor(constructor, type, (LivingEntityRenderer<T, M>) renderExtension.vivecraft$getSkinMapVR().get("default"));
+                if (((PlayerModel<?>) model).slim) {
+                    vivecraft$addLayerConstructor(constructor, type, (LivingEntityRenderer<T, M>) ((EntityRenderDispatcherExtension) entityRenderDispatcher).vivecraft$getSkinMapVRSeated().get("slim"));
+                    vivecraft$addLayerConstructor(constructor, type, (LivingEntityRenderer<T, M>) ((EntityRenderDispatcherExtension) entityRenderDispatcher).vivecraft$getSkinMapVR().get("slim"));
+                } else {
+                    vivecraft$addLayerConstructor(constructor, type, (LivingEntityRenderer<T, M>) ((EntityRenderDispatcherExtension) entityRenderDispatcher).vivecraft$getSkinMapVRSeated().get("default"));
+                    vivecraft$addLayerConstructor(constructor, type, (LivingEntityRenderer<T, M>) ((EntityRenderDispatcherExtension) entityRenderDispatcher).vivecraft$getSkinMapVR().get("default"));
                 }
             }
         }
@@ -107,7 +103,6 @@ public abstract class LivingEntityRendererMixin<T extends LivingEntity, M extend
     /**
      * does a basic Object.clone() copy
      */
-    @SuppressWarnings("unchecked")
     @Unique
     private void vivecraft$addLayerClone(RenderLayer<T, M> renderLayer, LivingEntityRenderer<T, M> target) {
         try {
@@ -123,7 +118,6 @@ public abstract class LivingEntityRendererMixin<T extends LivingEntity, M extend
     /**
      * uses the provided constructor, to create a new RenderLayer Instance
      */
-    @SuppressWarnings("unchecked")
     @Unique
     private void vivecraft$addLayerConstructor(Constructor<?> constructor, RenderLayerTypes.LayerType type, LivingEntityRenderer<T, M> target) {
         try {
@@ -134,12 +128,12 @@ public abstract class LivingEntityRendererMixin<T extends LivingEntity, M extend
                 case PARENT_MODEL_MODEL -> {
                     if (((PlayerModel<?>) model).slim) {
                         target.addLayer((RenderLayer<T, M>) constructor.newInstance(target,
-                            new HumanoidModel<>(Minecraft.getInstance().getEntityModels().bakeLayer(ModelLayers.PLAYER_SLIM_INNER_ARMOR)),
-                            new HumanoidModel<>(Minecraft.getInstance().getEntityModels().bakeLayer(ModelLayers.PLAYER_SLIM_OUTER_ARMOR))));
+                            new HumanoidModel(Minecraft.getInstance().getEntityModels().bakeLayer(ModelLayers.PLAYER_SLIM_INNER_ARMOR)),
+                            new HumanoidModel(Minecraft.getInstance().getEntityModels().bakeLayer(ModelLayers.PLAYER_SLIM_OUTER_ARMOR))));
                     } else {
                         target.addLayer((RenderLayer<T, M>) constructor.newInstance(target,
-                            new HumanoidModel<>(Minecraft.getInstance().getEntityModels().bakeLayer(ModelLayers.PLAYER_INNER_ARMOR)),
-                            new HumanoidModel<>(Minecraft.getInstance().getEntityModels().bakeLayer(ModelLayers.PLAYER_OUTER_ARMOR))));
+                            new HumanoidModel(Minecraft.getInstance().getEntityModels().bakeLayer(ModelLayers.PLAYER_INNER_ARMOR)),
+                            new HumanoidModel(Minecraft.getInstance().getEntityModels().bakeLayer(ModelLayers.PLAYER_OUTER_ARMOR))));
                     }
                 }
             }
