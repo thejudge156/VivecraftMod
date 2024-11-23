@@ -154,7 +154,7 @@ public class OpenXRStereoRenderer extends VRRenderer {
                     .displayTime(openxr.time)
                     .environmentBlendMode(XR10.XR_ENVIRONMENT_BLEND_MODE_OPAQUE)
                     .layers(layers));
-            this.openxr.logAll(error, "xrEndFrame", "");
+            this.openxr.logError(error, "xrEndFrame", "");
 
             projectionLayerViews.close();
         }
