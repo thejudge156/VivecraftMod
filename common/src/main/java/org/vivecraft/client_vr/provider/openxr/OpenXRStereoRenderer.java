@@ -45,10 +45,7 @@ public class OpenXRStereoRenderer extends VRRenderer {
 
             //Now we know the amount, create the image buffer
             int imageCount = intBuffer.get(0);
-            XrSwapchainImageOpenGLKHR.Buffer swapchainImageBuffer = XrSwapchainImageOpenGLKHR.calloc(imageCount, stack);
-            for (XrSwapchainImageOpenGLKHR image : swapchainImageBuffer) {
-                image.type(KHROpenGLEnable.XR_TYPE_SWAPCHAIN_IMAGE_OPENGL_KHR);
-            }
+            XrSwapchainImageOpenGLKHR.Buffer swapchainImageBuffer = this.openxr.device.createImageBuffers(imageCount, stack);
 
             error = XR10.xrEnumerateSwapchainImages(openxr.swapchain, intBuffer, XrSwapchainImageBaseHeader.create(swapchainImageBuffer.address(), swapchainImageBuffer.capacity()));
             this.openxr.logError(error, "xrEnumerateSwapchainImages", "get images");
@@ -120,6 +117,7 @@ public class OpenXRStereoRenderer extends VRRenderer {
 
     @Override
     public void endFrame() throws RenderConfigException {
+/*
         GL31.glBindFramebuffer(GL31.GL_READ_FRAMEBUFFER, getLeftEyeTarget().frameBufferId);
         GL31.glBindFramebuffer(GL31.GL_DRAW_FRAMEBUFFER, leftFramebuffers[swapIndex].frameBufferId);
         GL31.glBlitFramebuffer(0,0, getLeftEyeTarget().viewWidth, getLeftEyeTarget().viewHeight, 0,0, leftFramebuffers[swapIndex].viewWidth, leftFramebuffers[swapIndex].viewHeight, GL31.GL_STENCIL_BUFFER_BIT | GL31.GL_COLOR_BUFFER_BIT, GL31.GL_NEAREST);
@@ -127,8 +125,9 @@ public class OpenXRStereoRenderer extends VRRenderer {
         GL31.glBindFramebuffer(GL31.GL_READ_FRAMEBUFFER, getRightEyeTarget().frameBufferId);
         GL31.glBindFramebuffer(GL31.GL_DRAW_FRAMEBUFFER, rightFramebuffers[swapIndex].frameBufferId);
         GL31.glBlitFramebuffer(0,0, getRightEyeTarget().viewWidth, getRightEyeTarget().viewHeight, 0,0, rightFramebuffers[swapIndex].viewWidth, rightFramebuffers[swapIndex].viewHeight, GL31.GL_STENCIL_BUFFER_BIT | GL31.GL_COLOR_BUFFER_BIT, GL31.GL_NEAREST);
+*/
 
-        try (MemoryStack stack = MemoryStack.stackPush()){
+        try (MemoryStack stack = MemoryStack.stackPush()) {
             PointerBuffer layers = stack.callocPointer(1);
             int error;
             if (this.openxr.shouldRender) {
@@ -167,12 +166,12 @@ public class OpenXRStereoRenderer extends VRRenderer {
 
     @Override
     public RenderTarget getLeftEyeTarget() {
-        return leftFramebuffer;
+        return leftFramebuffers[swapIndex];
     }
 
     @Override
     public RenderTarget getRightEyeTarget() {
-        return rightFramebuffer;
+        return rightFramebuffers[swapIndex];
     }
 
     @Override
