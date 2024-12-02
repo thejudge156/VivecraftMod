@@ -705,6 +705,9 @@ public class MCOpenXR extends MCVR {
             }
             case XR10.XR_SESSION_STATE_EXITING, XR10.XR_SESSION_STATE_IDLE, XR10.XR_SESSION_STATE_SYNCHRONIZED: {
                 this.isActive = false;
+                if(device instanceof DeviceCompat.Mobile && state == XR10.XR_SESSION_STATE_EXITING) {
+                    Minecraft.getInstance().close();
+                }
                 break;
             }
             case XR10.XR_SESSION_STATE_LOSS_PENDING: {
@@ -1161,24 +1164,24 @@ public class MCOpenXR extends MCVR {
         }
 
         for (VRInputAction vrinputaction : this.inputActions.values()) {
-            long action = createAction(vrinputaction.name, vrinputaction.name, vrinputaction.type, new XrActionSet(this.actionSetHandles.get(vrinputaction.actionSet), instance), BOTH_HANDS);
+            long action = createAction(vrinputaction.name, vrinputaction.name, vrinputaction.type, new XrActionSet(this.actionSetHandles.get(vrinputaction.actionSet), instance));
             vrinputaction.setHandle(action);
         }
 
         setupControllers();
 
         XrActionSet actionSet = new XrActionSet(this.actionSetHandles.get(VRInputActionSet.GLOBAL), instance);
-        this.haptics[0] = createAction("/actions/global/out/righthaptic", "/actions/global/out/righthaptic", "haptic", actionSet, BOTH_HANDS);
-        this.haptics[1] = createAction("/actions/global/out/lefthaptic", "/actions/global/out/lefthaptic", "haptic", actionSet, BOTH_HANDS);
+        this.haptics[0] = createAction("/actions/global/out/righthaptic", "/actions/global/out/righthaptic", "haptic", actionSet);
+        this.haptics[1] = createAction("/actions/global/out/lefthaptic", "/actions/global/out/lefthaptic", "haptic", actionSet);
 
     }
 
     private void setupControllers() {
         XrActionSet actionSet = new XrActionSet(this.actionSetHandles.get(VRInputActionSet.GLOBAL), instance);
-        this.grip[0] = createAction("/actions/global/in/righthand", "/actions/global/in/righthand", "pose", actionSet, BOTH_HANDS);
-        this.grip[1] = createAction("/actions/global/in/lefthand", "/actions/global/in/lefthand", "pose", actionSet, BOTH_HANDS);
-        this.aim[0] = createAction("/actions/global/in/righthandaim", "/actions/global/in/righthandaim", "pose", actionSet, BOTH_HANDS);
-        this.aim[1] = createAction("/actions/global/in/lefthandaim", "/actions/global/in/lefthandaim", "pose", actionSet, BOTH_HANDS);
+        this.grip[0] = createAction("/actions/global/in/righthand", "/actions/global/in/righthand", "pose", actionSet);
+        this.grip[1] = createAction("/actions/global/in/lefthand", "/actions/global/in/lefthand", "pose", actionSet);
+        this.aim[0] = createAction("/actions/global/in/righthandaim", "/actions/global/in/righthandaim", "pose", actionSet);
+        this.aim[1] = createAction("/actions/global/in/lefthandaim", "/actions/global/in/lefthandaim", "pose", actionSet);
     }
 
     private void loadDefaultBindings() {

@@ -45,7 +45,7 @@ public class VRState {
             Minecraft instance = Minecraft.getInstance();
             // make sure the lwjgl version is the right one
             // TODO: move this into the init, does mean all callocs need to be done later
-            // check that the right lwjgl version is loaded that we ship the openvr part of
+/*            // check that the right lwjgl version is loaded that we ship the openvr part of
             if (!Version.getVersion().startsWith("3.2.2")) {
                 String suppliedJar = "";
                 try {
@@ -55,7 +55,7 @@ public class VRState {
                 }
 
                 throw new RenderConfigException("VR Init Error", new TranslatableComponent("vivecraft.messages.rendersetupfailed", I18n.get("vivecraft.messages.invalidlwjgl", Version.getVersion(), "3.2.2", suppliedJar), "OpenVR_LWJGL"));
-            }
+            }*/
             switch (dh.vrSettings.stereoProviderPluginID) {
                 case OPENVR -> dh.vr = new MCOpenVR(instance, dh);
                 case OPENXR -> dh.vr = new MCOpenXR(instance, dh);
